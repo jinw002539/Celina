@@ -1,0 +1,189 @@
+/* Geral */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: #333;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    background-color: #f5f5f5;
+    /* cor de fallback */
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../img/back.jpeg') no-repeat center center;
+    background-size: cover;
+    filter: blur(8px) brightness(0.6);
+    /* blur e escurecimento */
+    z-index: -1;
+    /* fica atrás do conteúdo */
+}
+
+h1,
+h2 {
+    text-align: center;
+    color: #c62828;
+}
+
+fieldset {
+    border: 2px solid #c62828;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+legend {
+    font-weight: bold;
+    color: #c62828;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 95%;
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #c62828;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #a32222;
+}
+
+
+/* Lista de produtos */
+
+#produtos-section {
+    max-width: 500px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#produtos-section div {
+    margin: 8px 0;
+}
+
+#produtos-section label {
+    margin-left: 8px;
+}
+
+
+/* Resumo do pedido */
+
+#resumo-section {
+    max-width: 500px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#resumo-section strong {
+    color: #c62828;
+}
+
+#resumo-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+#resumo-section li {
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+
+/* Rodapé */
+
+footer {
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #c62828;
+    color: white;
+}
+
+.header-pedidos {
+    background: #222;
+    color: #fff;
+    padding: 1em 0.5em 0.5em 0.5em;
+    margin-bottom: 2em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nav-pedidos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.btn-voltar {
+    background: #fff;
+    color: #222;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-voltar:hover {
+    background: #f0f0f0;
+    color: #007bff;
+}
+
+.titulo-pedidos {
+    margin: 0 auto;
+    font-size: 2em;
+    letter-spacing: 1px;
+    text-align: center;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.footer-fixo {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    background: #222;
+    color: #fff;
+    text-align: center;
+    padding: 0.7em 0;
+    font-size: 1em;
+    z-index: 100;
+}
+
+body {
+    margin-bottom: 60px;
+    /* espaço para o footer */
+}

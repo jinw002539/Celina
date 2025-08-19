@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuze's Commerce - Pedidos</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Cabeçalho -->
+    <header class="header-pedidos">
+        <nav class="nav-pedidos">
+            <a href="index.html" class="btn-voltar">Página inicial</a>
+            <h1 class="titulo-pedidos">Área de Pedidos</h1>
+        </nav>
+    </header>
+
+    <!-- Formulário de dados do cliente -->
+    <form id="formulario-pedido" style="margin-bottom: 2em;">
+        <fieldset>
+            <legend>Preencha seus dados para continuar</legend>
+            <label for="nome">Nome completo:</label><br>
+            <input type="text" id="nome" name="nome" required><br><br>
+            <label for="contato">Contato (telefone ou WhatsApp):</label><br>
+            <input type="text" id="contato" name="contato" required><br><br>
+            <label for="bairro">Bairro:</label><br>
+            <input type="text" id="bairro" name="bairro" required><br><br>
+            <button type="submit">Continuar</button>
+        </fieldset>
+    </form>
+
+    <!-- Lista de produtos -->
+    <section id="produtos-section" style="display:none; margin-bottom:2em;">
+        <h2>Escolha seus produtos</h2>
+        <form id="form-produtos">
+            <div>
+                <input type="checkbox" id="chourico" name="produtos" value="Chouriço" data-preco="100">
+                <label for="chourico">Chouriço - 100.00 MT</label>
+                <input type="number" id="qtd-chourico" name="qtd-chourico" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <div>
+                <input type="checkbox" id="palone" name="produtos" value="Palone" data-preco="200">
+                <label for="palone">Palone - 200.00 MT</label>
+                <input type="number" id="qtd-palone" name="qtd-palone" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <div>
+                <input type="checkbox" id="viena" name="produtos" value="Vienas" data-preco="200">
+                <label for="viena">Vienas - 200.00 MT</label>
+                <input type="number" id="qtd-viena" name="qtd-viena" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <div>
+                <input type="checkbox" id="ovos" name="produtos" value="Ovos" data-preco="500">
+                <label for="ovos">Ovos - 500.00 MT</label>
+                <input type="number" id="qtd-ovos" name="qtd-ovos" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <div>
+                <input type="checkbox" id="queijo" name="produtos" value="Queijo" data-preco="300">
+                <label for="queijo">Queijo - 300.00 MT</label>
+                <input type="number" id="qtd-queijo" name="qtd-queijo" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <div>
+                <input type="checkbox" id="carne" name="produtos" value="Carne" data-preco="1000">
+                <label for="carne">Carne - 1000.00 MT</label>
+                <input type="number" id="qtd-carne" name="qtd-carne" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <div>
+                <input type="checkbox" id="rachel" name="produtos" value="Rachel" data-preco="500">
+                <label for="rachel">Rachel - 500.00 MT</label>
+                <input type="number" id="qtd-rachel" name="qtd-rachel" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <div>
+                <input type="checkbox" id="babalaza" name="produtos" value="Babalaza" data-preco="100">
+                <label for="babalaza">Babalaza - 100.00 MT</label>
+                <input type="number" id="qtd-babalaza" name="qtd-babalaza" min="1" value="1" style="width:60px;" disabled>
+            </div>
+            <br>
+            <button type="submit">Finalizar Pedido</button>
+        </form>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer-fixo">
+        <p>&copy; 2025 Chuze's Commerce</p>
+        <p>Para mais informações, contacte: 841234567</p>
+    </footer>
+
+    <script>
+        const formDados = document.getElementById('formulario-pedido');
+        const produtosSection = document.getElementById('produtos-section');
+        const formProdutos = document.getElementById('form-produtos');
+        let dadosCliente = {};
+
+        // Ativa/desativa campo de quantidade
+        formProdutos.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const qtdInput = document.getElementById('qtd-' + checkbox.id);
+                qtdInput.disabled = !checkbox.checked;
+            });
+        });
+
+        // Submeter dados do cliente
+        formDados.addEventListener('submit', e => {
+            e.preventDefault();
+            dadosCliente = {
+                nome: formDados.nome.value,
+                contato: formDados.contato.value,
+                bairro: formDados.bairro.value
+            };
+            formDados.style.display = 'none';
+            produtosSection.style.display = 'block';
+        });
+
+        // Submeter produtos e enviar para WhatsApp
+        formProdutos.addEventListener('submit', async e => {
+            e.preventDefault();
+
+            const produtosSelecionados = [];
+            let total = 0;
+
+            formProdutos.querySelectorAll('input[name="produtos"]:checked').forEach(item => {
+                const qtd = Number(document.getElementById('qtd-' + item.id).value) || 1;
+                const preco = Number(item.getAttribute('data-preco'));
+                produtosSelecionados.push({
+                    nome: item.value,
+                    preco,
+                    qtd,
+                    subtotal: preco * qtd
+                });
+                total += preco * qtd;
+            });
+
+            if (produtosSelecionados.length === 0) {
+                alert("Selecione pelo menos um produto!");
+                return;
+            }
+
+            // Monta mensagem WhatsApp
+            let textoWhatsApp = `*Pedido de:* ${dadosCliente.nome}%0A*Contato:* ${dadosCliente.contato}%0A*Bairro:* ${dadosCliente.bairro}%0A%0A*Produtos:*%0A`;
+            produtosSelecionados.forEach(p => {
+                textoWhatsApp += `${p.nome} - ${p.qtd} x ${p.preco} MT = ${p.subtotal} MT%0A`;
+            });
+            textoWhatsApp += `%0A*Total:* ${total} MT`;
+
+            try {
+                const response = await fetch('http://localhost:3000/pedido', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nome: dadosCliente.nome,
+                        contato: dadosCliente.contato,
+                        bairro: dadosCliente.bairro,
+                        produtos: produtosSelecionados,
+                        total: total
+                    })
+                });
+
+                const resultado = await response.json();
+
+                if (!response.ok) throw new Error(resultado.error || "Erro no servidor");
+
+                alert(`Pedido #${resultado.id} registrado! Redirecionando...`);
+                window.location.href = `https://wa.me/258827599423?text=${textoWhatsApp}`;
+
+            } catch (err) {
+                console.error("Erro completo:", err);
+                alert("Erro: " + err.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

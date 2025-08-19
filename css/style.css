@@ -1,0 +1,130 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: #333;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    background-color: #f5f5f5;
+    /* cor de fallback */
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../img/back.jpeg') no-repeat center center;
+    background-size: cover;
+    filter: blur(8px) brightness(0.6);
+    /* blur e escurecimento */
+    z-index: -1;
+    /* fica atrás do conteúdo */
+}
+
+header {
+    background-color: burlywood;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.categorias {
+    background-color: #ffebee;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.categorias span {
+    margin: 0 10px;
+    font-weight: bold;
+    color: burlywood;
+}
+
+.categorias a {
+    color: black;
+    text-decoration: none;
+    /* tira o sublinhado */
+    font-weight: bold;
+}
+
+.categorias a:hover {
+    color: grey;
+    text-decoration: solid
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.produtos {
+    max-width: 900px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.titulo-produtos {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.produto {
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.produto img {
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+}
+
+.produto:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.nome {
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+.preco {
+    color: #c62828;
+    font-weight: bold;
+}
+
+footer {
+    background-color: burlywood;
+    color: black;
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+}
