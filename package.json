@@ -1,0 +1,19 @@
+{
+    "name": "chuze-server",
+    "version": "1.0.0",
+    "description": "Backend para Chuze's Commerce",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.1",
+        "express": "^5.1.0",
+        "pg": "^8.16.3"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    }
+}

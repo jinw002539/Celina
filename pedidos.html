@@ -149,7 +149,8 @@
             textoWhatsApp += `%0A*Total:* ${total} MT`;
 
             try {
-                const response = await fetch('http://localhost:3000/pedido', {
+                // Usar URL relativa para a API
+                const response = await fetch('/pedido', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

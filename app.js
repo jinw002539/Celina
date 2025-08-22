@@ -1,15 +1,13 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const { Pool } = require('pg');
 const cors = require('cors');
 
-// Configuração do PostgreSQL
+// Configuração do PostgreSQL para Render
 const pool = new Pool({
-    user: process.env.DB_USER || 'alexandre',
-    host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME || 'pedidos',
-    password: process.env.DB_PASS || 'alex123',
-    port: process.env.DB_PORT || 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 // Teste de conexão ao iniciar
@@ -23,6 +21,10 @@ pool.query('SELECT NOW()')
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Servir arquivos estáticos
+// app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname)));
 
 // Rota de saúde
 app.get('/health', (req, res) => {
@@ -50,10 +52,19 @@ app.post('/pedido', async(req, res) => {
     }
 });
 
+// Rota para todas as páginas HTML
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, '../public', 'index.html'));
+// });
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+
 // Mantém o processo ativo
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
 
 // Tratamento de erros não capturados
