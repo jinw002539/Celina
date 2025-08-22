@@ -145,9 +145,55 @@ app.get('/admin/stats', auth, async(req, res) => {
     }
 });
 
-// 🖥️ PÁGINA ADMIN (PROTEGIDA)
-app.get('/admin', auth, (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
+// 📊 ROTAS ADMIN (PROTEGIDAS) - CORRIGIDAS
+app.get('/admin/pedidos', auth, async(req, res) => {
+    let client;
+    try {
+        client = await pool.connect();
+        const result = await client.query('SELECT * FROM pedidos ORDER BY data_criacao DESC');
+
+        // ✅ Converter corretamente para JSON
+        const pedidos = result.rows.map(row => ({
+            id: row.id,
+            nome: row.nome,
+            contato: row.contato,
+            bairro: row.bairro,
+            produtos: row.produtos, // Já é JSONB, não precisa converter
+            total: row.total,
+            data_criacao: row.data_criacao
+        }));
+
+        res.json(pedidos);
+    } catch (err) {
+        console.error('Erro ao buscar pedidos:', err);
+        res.status(500).json({ error: 'Erro ao carregar pedidos' });
+    } finally {
+        if (client) client.release();
+    }
+});
+
+app.get('/admin/stats', auth, async(req, res) => {
+    let client;
+    try {
+        client = await pool.connect();
+        const totalResult = await client.query('SELECT COUNT(*) FROM pedidos');
+        const revenueResult = await client.query('SELECT SUM(total) FROM pedidos');
+
+        res.json({
+            totalPedidos: parseInt(totalResult.rows[0].count || 0),
+            receitaTotal: parseInt(revenueResult.rows[0].sum || 0),
+            dataConsulta: new Date().toLocaleString('pt-BR')
+        });
+    } catch (err) {
+        console.error('Erro ao buscar estatísticas:', err);
+        res.json({
+            totalPedidos: 0,
+            receitaTotal: 0,
+            dataConsulta: new Date().toLocaleString('pt-BR')
+        });
+    } finally {
+        if (client) client.release();
+    }
 });
 
 // Rota para debug público

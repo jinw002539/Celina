@@ -308,16 +308,28 @@
 
             if (pedidosOrdenados.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; color: #666; padding: 20px;">
-                            📭 Nenhum pedido encontrado
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td colspan="7" style="text-align: center; color: #666; padding: 20px;">
+                        📭 Nenhum pedido encontrado
+                    </td>
+                </tr>
+            `;
                 return;
             }
 
-            tbody.innerHTML = pedidosOrdenados.map(pedido => `
+            tbody.innerHTML = pedidosOrdenados.map(pedido => {
+                        // ✅ CORREÇÃO: Verificar se produtos já é objeto ou string JSON
+                        let produtos;
+                        try {
+                            produtos = typeof pedido.produtos === 'string' ?
+                                JSON.parse(pedido.produtos) :
+                                pedido.produtos;
+                        } catch (e) {
+                            console.error('Erro ao parsear produtos:', e);
+                            produtos = [];
+                        }
+
+                        return `
                 <tr>
                     <td>${pedido.id}</td>
                     <td>${pedido.nome}</td>
@@ -325,11 +337,12 @@
                     <td>${pedido.bairro}</td>
                     <td><strong>${pedido.total} MT</strong></td>
                     <td>${new Date(pedido.data_criacao).toLocaleString('pt-BR')}</td>
-                    <td>${JSON.parse(pedido.produtos).map(p => `${p.nome} (${p.qtd}x)`).join(', ')}</td>
+                    <td>${produtos.map(p => `${p.nome} (${p.qtd}x)`).join(', ')}</td>
                 </tr>
-            `).join('');
-        }
-
+            `;
+        }).join('');
+    }
+    
         function filtrarPedidos() {
             const searchTerm = document.getElementById('search').value.toLowerCase();
             if (!searchTerm) {
