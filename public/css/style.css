@@ -1,3 +1,59 @@
+/* Responsividade geral */
+
+@media (max-width: 900px) {
+    .produtos {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding: 6px;
+    }
+    .produto {
+        max-width: 98vw;
+    }
+    .titulo-produtos {
+        font-size: 1.2em;
+    }
+    header,
+    footer {
+        font-size: 1em;
+        padding: 0.7em 0.2em;
+    }
+}
+
+@media (max-width: 600px) {
+    .produtos {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 2px;
+    }
+    .produto {
+        max-width: 99vw;
+        padding: 6px;
+    }
+    .titulo-produtos {
+        font-size: 1em;
+    }
+    header,
+    footer {
+        font-size: 0.95em;
+        padding: 0.5em 0.1em;
+    }
+    nav ul {
+        flex-direction: column;
+        gap: 6px;
+    }
+    nav ul li {
+        margin: 0 0 6px 0;
+    }
+    .categorias {
+        font-size: 0.98em;
+        padding: 6px;
+    }
+    .produto img {
+        max-width: 96vw;
+        height: auto;
+    }
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
