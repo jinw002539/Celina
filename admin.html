@@ -49,6 +49,60 @@
             color: #c62828;
         }
         
+        .controles-atualizacao {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .controles-atualizacao span {
+            font-size: 14px;
+            color: #0d47a1;
+            font-weight: 500;
+        }
+        
+        .btn {
+            background: #c62828;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #a52222;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: #2196f3;
+            margin-left: 8px;
+        }
+        
+        .btn-small:hover {
+            background: #1976d2;
+        }
+        
+        #ultima-atualizacao {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        
+        #status-atualizacao {
+            font-weight: bold;
+            color: #388e3c;
+        }
+        
         table {
             border-collapse: collapse;
             width: 100%;
@@ -77,20 +131,6 @@
             background-color: #f1f1f1;
         }
         
-        .btn {
-            background: #c62828;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        
-        .btn:hover {
-            background: #a52222;
-        }
-        
         .filters {
             margin-bottom: 20px;
             display: flex;
@@ -103,46 +143,6 @@
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-        }
-        
-        .controles-atualizacao {
-            background: #e3f2fd;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 15px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            border-left: 4px solid #2196f3;
-        }
-        
-        .controles-atualizacao span {
-            font-size: 14px;
-            color: #0d47a1;
-            font-weight: 500;
-        }
-        
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #2196f3;
-            margin-left: 8px;
-        }
-        
-        .btn-small:hover {
-            background: #1976d2;
-        }
-        
-        #ultima-atualizacao {
-            font-weight: bold;
-            color: #d32f2f;
-        }
-        
-        #status-atualizacao {
-            font-weight: bold;
-            color: #388e3c;
         }
     </style>
 </head>
@@ -166,7 +166,6 @@
             </div>
         </div>
 
-        <!-- 🔄 CONTROLES DE ATUALIZAÇÃO (FORA da div stats) -->
         <div class="controles-atualizacao">
             <div>
                 <span>⏰ Última atualização: </span>
@@ -176,24 +175,25 @@
                 <span>🔄 Atualização automática: </span>
                 <span id="status-atualizacao">-</span>
                 <button class="btn btn-small" id="toggle-atualizacao" onclick="toggleAtualizacao()">
-                ⏸️ Pausar
-            </button>
+                    ⏸️ Pausar
+                </button>
                 <button class="btn btn-small" onclick="carregarPedidos()">
-                🔄 Atualizar Agora
-            </button>
+                    🔄 Atualizar Agora
+                </button>
             </div>
         </div>
 
         <div class="filters">
             <input type="text" id="search" placeholder="🔍 Pesquisar..." oninput="filtrarPedidos()">
             <select id="sort" onchange="carregarPedidos()">
-            <option value="newest">Mais Recentes</option>
-            <option value="oldest">Mais Antigos</option>
-            <option value="highest">Maior Valor</option>
-            <option value="lowest">Menor Valor</option>
-        </select>
+                <option value="newest">Mais Recentes</option>
+                <option value="oldest">Mais Antigos</option>
+                <option value="highest">Maior Valor</option>
+                <option value="lowest">Menor Valor</option>
+            </select>
             <button class="btn" onclick="carregarPedidos()">🔄 Atualizar</button>
             <button class="btn" onclick="exportarCSV()">📥 Exportar CSV</button>
+            <button class="btn btn-small" onclick="verificarTabela()">🔍 Verificar Tabela</button>
         </div>
 
         <div id="pedidos-container">
@@ -238,13 +238,50 @@
         async function carregarPedidos() {
             try {
                 const response = await fetch('/admin/pedidos');
+
+                if (!response.ok) {
+                    throw new Error('Erro no servidor: ' + response.status);
+                }
+
                 todosPedidos = await response.json();
                 exibirPedidos(todosPedidos);
                 await carregarEstatisticas();
+
+                // Atualizar timestamp
+                document.getElementById('ultima-atualizacao').textContent = new Date().toLocaleString('pt-BR');
+
             } catch (error) {
-                console.error('Erro:', error);
-                document.getElementById('pedidos-body').innerHTML =
-                    '<tr><td colspan="7">Erro ao carregar pedidos</td></tr>';
+                console.error('Erro ao carregar pedidos:', error);
+                document.getElementById('pedidos-body').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="color: red; text-align: center; padding: 20px;">
+                            ❌ Erro ao carregar pedidos
+                            <br>
+                            <small>${error.message}</small>
+                            <br>
+                            <button class="btn btn-small" onclick="verificarTabela()" style="margin-top: 10px;">
+                                🔍 Verificar Status da Tabela
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function verificarTabela() {
+            try {
+                const response = await fetch('/check-table');
+                const data = await response.json();
+
+                if (data.tabelaExiste) {
+                    alert('✅ Tabela "pedidos" EXISTE no banco de dados!');
+                    carregarPedidos(); // Tentar carregar novamente
+                } else {
+                    alert('❌ Tabela "pedidos" NÃO existe. \n\nFaça um pedido primeiro para criar a tabela automaticamente.');
+                }
+
+            } catch (error) {
+                alert('Erro ao verificar tabela: ' + error.message);
             }
         }
 
@@ -269,99 +306,114 @@
                     break;
             }
 
+            if (pedidosOrdenados.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #666; padding: 20px;">
+                            📭 Nenhum pedido encontrado
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
             tbody.innerHTML = pedidosOrdenados.map(pedido => `
-            <tr>
-                <td>${pedido.id}</td>
-                <td>${pedido.nome}</td>
-                <td>${pedido.contato}</td>
-                <td>${pedido.bairro}</td>
-                <td>${pedido.total} MT</td>
-                <td>${new Date(pedido.data_criacao).toLocaleString('pt-BR')}</td>
-                <td>${JSON.parse(pedido.produtos).map(p => `${p.nome} (${p.qtd}x)`).join(', ')}</td>
-            </tr>
-        `).join('');
-
-        // Atualizar contador de última atualização
-        document.getElementById('ultima-atualizacao').textContent = new Date().toLocaleString('pt-BR');
-    }
-
-    function filtrarPedidos() {
-        const searchTerm = document.getElementById('search').value.toLowerCase();
-        if (!searchTerm) {
-            exibirPedidos(todosPedidos);
-            return;
+                <tr>
+                    <td>${pedido.id}</td>
+                    <td>${pedido.nome}</td>
+                    <td>${pedido.contato}</td>
+                    <td>${pedido.bairro}</td>
+                    <td><strong>${pedido.total} MT</strong></td>
+                    <td>${new Date(pedido.data_criacao).toLocaleString('pt-BR')}</td>
+                    <td>${JSON.parse(pedido.produtos).map(p => `${p.nome} (${p.qtd}x)`).join(', ')}</td>
+                </tr>
+            `).join('');
         }
 
-        const pedidosFiltrados = todosPedidos.filter(pedido =>
-            pedido.nome.toLowerCase().includes(searchTerm) ||
-            pedido.contato.includes(searchTerm) ||
-            pedido.bairro.toLowerCase().includes(searchTerm) ||
-            pedido.id.toString().includes(searchTerm)
-        );
-        
-        exibirPedidos(pedidosFiltrados);
-    }
+        function filtrarPedidos() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            if (!searchTerm) {
+                exibirPedidos(todosPedidos);
+                return;
+            }
 
-    function exportarCSV() {
-        const headers = ['ID', 'Nome', 'Contato', 'Bairro', 'Total', 'Data', 'Produtos'];
-        const csv = [
-            headers.join(','),
-            ...todosPedidos.map(pedido => [
-                pedido.id,
-                `"${pedido.nome}"`,
-                pedido.contato,
-                `"${pedido.bairro}"`,
-                pedido.total,
-                `"${new Date(pedido.data_criacao).toLocaleString('pt-BR')}"`,
-                `"${JSON.parse(pedido.produtos).map(p => `${p.nome} (${p.qtd}x)`).join(', ')}"`
-            ].join(','))
-        ].join('\n');
-
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `pedidos-chuze-${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-    }
-
-    function iniciarAtualizacaoAutomatica() {
-        // Limpar intervalo anterior se existir
-        if (intervaloAtualizacao) {
-            clearInterval(intervaloAtualizacao);
+            const pedidosFiltrados = todosPedidos.filter(pedido =>
+                pedido.nome.toLowerCase().includes(searchTerm) ||
+                pedido.contato.includes(searchTerm) ||
+                pedido.bairro.toLowerCase().includes(searchTerm) ||
+                pedido.id.toString().includes(searchTerm)
+            );
+            
+            exibirPedidos(pedidosFiltrados);
         }
-        
-        // Configurar novo intervalo de 10 segundos
-        intervaloAtualizacao = setInterval(carregarPedidos, 10000);
-        
-        // Atualizar status
-        document.getElementById('status-atualizacao').textContent = 'Ativa (10s)';
-        document.getElementById('toggle-atualizacao').textContent = '⏸️ Pausar';
-    }
 
-    function pausarAtualizacaoAutomatica() {
-        if (intervaloAtualizacao) {
-            clearInterval(intervaloAtualizacao);
-            intervaloAtualizacao = null;
-            document.getElementById('status-atualizacao').textContent = 'Pausada';
-            document.getElementById('toggle-atualizacao').textContent = '▶️ Retomar';
+        function exportarCSV() {
+            if (todosPedidos.length === 0) {
+                alert('Não há pedidos para exportar.');
+                return;
+            }
+
+            const headers = ['ID', 'Nome', 'Contato', 'Bairro', 'Total', 'Data', 'Produtos'];
+            const csv = [
+                headers.join(','),
+                ...todosPedidos.map(pedido => [
+                    pedido.id,
+                    `"${pedido.nome.replace(/"/g, '""')}"`,
+                    pedido.contato,
+                    `"${pedido.bairro.replace(/"/g, '""')}"`,
+                    pedido.total,
+                    `"${new Date(pedido.data_criacao).toLocaleString('pt-BR')}"`,
+                    `"${JSON.parse(pedido.produtos).map(p => `${p.nome} (${p.qtd}x)`).join(', ').replace(/"/g, '""')}"`
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pedidos-chuze-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
-    }
 
-    function toggleAtualizacao() {
-        if (intervaloAtualizacao) {
-            pausarAtualizacaoAutomatica();
-        } else {
+        function iniciarAtualizacaoAutomatica() {
+            // Limpar intervalo anterior se existir
+            if (intervaloAtualizacao) {
+                clearInterval(intervaloAtualizacao);
+            }
+            
+            // Configurar novo intervalo de 10 segundos
+            intervaloAtualizacao = setInterval(carregarPedidos, 10000);
+            
+            // Atualizar status
+            document.getElementById('status-atualizacao').textContent = 'Ativa (10s)';
+            document.getElementById('toggle-atualizacao').textContent = '⏸️ Pausar';
+        }
+
+        function pausarAtualizacaoAutomatica() {
+            if (intervaloAtualizacao) {
+                clearInterval(intervaloAtualizacao);
+                intervaloAtualizacao = null;
+                document.getElementById('status-atualizacao').textContent = 'Pausada';
+                document.getElementById('toggle-atualizacao').textContent = '▶️ Retomar';
+            }
+        }
+
+        function toggleAtualizacao() {
+            if (intervaloAtualizacao) {
+                pausarAtualizacaoAutomatica();
+            } else {
+                iniciarAtualizacaoAutomatica();
+            }
+        }
+
+        // Carregar dados ao abrir a página
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarPedidos();
             iniciarAtualizacaoAutomatica();
-        }
-    }
-
-    // Carregar dados ao abrir a página
-    carregarPedidos();
-    iniciarAtualizacaoAutomatica();
-
-    // Atualizar a cada 10 segundos (já configurado acima)
+            document.getElementById('status-atualizacao').textContent = 'Ativa (10s)';
+            document.getElementById('ultima-atualizacao').textContent = new Date().toLocaleString('pt-BR');
+        });
     </script>
 </body>
 
