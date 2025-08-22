@@ -287,26 +287,8 @@
 
         function exibirPedidos(pedidos) {
             const tbody = document.getElementById('pedidos-body');
-            const sortBy = document.getElementById('sort').value;
 
-            // Ordenar pedidos
-            let pedidosOrdenados = [...pedidos];
-            switch (sortBy) {
-                case 'newest':
-                    pedidosOrdenados.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
-                    break;
-                case 'oldest':
-                    pedidosOrdenados.sort((a, b) => new Date(a.data_criacao) - new Date(b.data_criacao));
-                    break;
-                case 'highest':
-                    pedidosOrdenados.sort((a, b) => b.total - a.total);
-                    break;
-                case 'lowest':
-                    pedidosOrdenados.sort((a, b) => a.total - b.total);
-                    break;
-            }
-
-            if (pedidosOrdenados.length === 0) {
+            if (pedidos.length === 0) {
                 tbody.innerHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; color: #666; padding: 20px;">
@@ -317,17 +299,9 @@
                 return;
             }
 
-            tbody.innerHTML = pedidosOrdenados.map(pedido => {
-                        // ✅ CORREÇÃO: Verificar se produtos já é objeto ou string JSON
-                        let produtos;
-                        try {
-                            produtos = typeof pedido.produtos === 'string' ?
-                                JSON.parse(pedido.produtos) :
-                                pedido.produtos;
-                        } catch (e) {
-                            console.error('Erro ao parsear produtos:', e);
-                            produtos = [];
-                        }
+            tbody.innerHTML = pedidos.map(pedido => {
+                        // ✅ Já é objeto, não precisa fazer JSON.parse!
+                        const produtos = pedido.produtos;
 
                         return `
                 <tr>
@@ -342,7 +316,7 @@
             `;
         }).join('');
     }
-    
+
         function filtrarPedidos() {
             const searchTerm = document.getElementById('search').value.toLowerCase();
             if (!searchTerm) {
@@ -356,7 +330,7 @@
                 pedido.bairro.toLowerCase().includes(searchTerm) ||
                 pedido.id.toString().includes(searchTerm)
             );
-            
+
             exibirPedidos(pedidosFiltrados);
         }
 
@@ -368,15 +342,15 @@
 
             const headers = ['ID', 'Nome', 'Contato', 'Bairro', 'Total', 'Data', 'Produtos'];
             const csv = [
-                headers.join(','),
-                ...todosPedidos.map(pedido => [
-                    pedido.id,
-                    `"${pedido.nome.replace(/"/g, '""')}"`,
-                    pedido.contato,
-                    `"${pedido.bairro.replace(/"/g, '""')}"`,
-                    pedido.total,
-                    `"${new Date(pedido.data_criacao).toLocaleString('pt-BR')}"`,
-                    `"${JSON.parse(pedido.produtos).map(p => `${p.nome} (${p.qtd}x)`).join(', ').replace(/"/g, '""')}"`
+                    headers.join(','),
+                    ...todosPedidos.map(pedido => [
+                            pedido.id,
+                            `"${pedido.nome.replace(/"/g, '""')}"`,
+                            pedido.contato,
+                            `"${pedido.bairro.replace(/"/g, '""')}"`,
+                            pedido.total,
+                            `"${new Date(pedido.data_criacao).toLocaleString('pt-BR')}"`,
+                            `"${JSON.parse(pedido.produtos).map(p => `${p.nome} (${p.qtd}x)`).join(', ').replace(/"/g, '""')}"`
                 ].join(','))
             ].join('\n');
 
